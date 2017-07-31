@@ -1,9 +1,10 @@
 class Todo
 	def initialize
-		@arr = Array.new
+		# When using a lot of variables can be beneficial to line equals so it's easier to see what you have declared. Just a suggestion
+		@arr          = Array.new
 		@sorted_array = @arr
-		@sort = 'recent'
-		@add_sort = false
+		@sort         = 'recent'
+		@add_sort     = false
 		puts "We've started a new To-Do List."
 		add_item
 	end
@@ -14,19 +15,22 @@ class Todo
 		puts
 		@arr.push item
 		@sorted_array = @arr
-		if @sort == 'recent'
-			sort_recent
-		elsif @sort == 'old'
-			sort_oldest
-		elsif (@sort == 'alpha') || (@sort == 'rev alpha')
-			@add_sort = true
-			sort_alpha
+		# Suggest looking into case statements, something like the follow is neater then multiple if statements and perfect for what you are doing
+		case @sort
+			when 'recent'
+			  sort_recent
+			when 'old'
+			  sort_oldest
+			when 'alpha', 'rev alpha'
+			  @add_sort = true
+			  sort_alpha
 		end
 	end
 
 	def remove_item
-		while true
-			puts "What item would you like to remove?"
+		# Had a quick read and a Kernal#loop is an alternative to while true from what I could see. I can't find anything to say you shouldn't use while true, however when you are in more complex code it can be hard to work out the break cases then just looking at the escape condition
+		loop do 
+		  puts "What item would you like to remove?"
 			item = gets.chomp
 			puts
 			if @arr.include?(item)
@@ -55,26 +59,17 @@ class Todo
 	end
 
 	def sort_alpha
-		temp_arr = @arr.clone
-		sorted = []
+		temp_arr    = @arr.clone
+		sorted      = []
 		first_index = 0
-		length = temp_arr.length
-		first = temp_arr[first_index]
-		last = temp_arr.last
-		last_index = length - 1
-
-		while true
-			length = temp_arr.length
-			if length <= 0
-				@sorted_array = sorted
-				break
-			end
-			first = temp_arr[first_index]
-			last = temp_arr.last
-			last_index = length - 1
-			if first_index == last_index
+		# Suggested escape condition
+		while temp_arr.length > 0
+			first      = temp_arr[first_index]
+			last       = temp_arr.last
+			if first_index == (temp_arr.length - 1)
 				sorted.push temp_arr.pop
 				first_index = 0
+			# Not sure logic is correct with the &&. You are saying if first == last and if first is less then last
 			elsif (first.downcase < last.downcase) || ((first.downcase == last.downcase) && (first < last))
 				temp_arr.push first
 				temp_arr.delete_at(first_index)
@@ -84,6 +79,9 @@ class Todo
 			end
 		end
 
+		@sorted_array = sorted
+
+		# Think you are over complicating with the @add_sort. Remove this handling and keep the sort based upon the @sort
 		if @add_sort == true
 			if @sort == 'rev alpha'
 				@sorted_array = @sorted_array.reverse
@@ -112,6 +110,7 @@ class Todo
 		list_items
 	end
 
+	# Irrelevant method. Only called once, and wraps a single line call. Just use @arr.empty? where required
 	private
 	def empty?
 		@arr.empty?
@@ -129,7 +128,7 @@ class Todo
 end
 
 to_do_list = Todo.new
-
+# this is the sort of thing I was talking about with the while true conditions. You have embedded multiple whiles and it is starting to harder to read the code
 while true
 	puts "What would you like to do? (add, remove, sort)"
 	input = gets.chomp
